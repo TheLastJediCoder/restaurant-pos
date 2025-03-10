@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from "@mui/material/styles";
 import darkTheme from "./theme";
-
-
+import ResponsiveAppBar from "./components/responsive-app-bar";
+import { Container } from "@mui/material";
 
 export const metadata: Metadata = {
   title: "Restaurant POS",
@@ -18,8 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-      <ThemeProvider theme={darkTheme}>
-        {children}
+        <ThemeProvider theme={darkTheme}>
+          <ResponsiveAppBar></ResponsiveAppBar>
+          <Container maxWidth="xl" sx={{ paddingY: "24px" }}>
+            {children}
+          </Container>
         </ThemeProvider>
       </body>
     </html>
