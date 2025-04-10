@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils"
 // Navigation items for the main navigation
 const navItems = [
   { name: "Menu", href: "/pos" },
-  { name: "Customers", href: "/pos/customers" },
-  { name: "Tables", href: "/pos/tables" },
+  // { name: "Customers", href: "/pos/customers" },
+  // { name: "Tables", href: "/pos/tables" },
   { name: "Orders", href: "/pos/orders" },
-  { name: "Offline", href: "/pos/offline" },
+  // { name: "Offline", href: "/pos/offline" },
   { name: "Management", href: "/pos/management" },
 ]
 

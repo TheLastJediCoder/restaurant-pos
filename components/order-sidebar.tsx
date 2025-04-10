@@ -24,14 +24,14 @@ export function OrderSidebar({ orderItems, updateQuantity, updateNotes, removeIt
   const [isProcessing, setIsProcessing] = useState(false)
 
   // Calculate subtotal
-  const subtotal = orderItems.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0)
+  const total = orderItems.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0)
 
   // Calculate tax (assuming 8.5% tax rate)
-  const taxRate = 0.085
-  const tax = subtotal * taxRate
+  // const taxRate = 0.085
+  // const tax = subtotal * taxRate
 
   // Calculate total
-  const total = subtotal + tax
+  // const total = subtotal
 
   // Handle checkout
   const handleCheckout = async () => {
@@ -156,14 +156,14 @@ export function OrderSidebar({ orderItems, updateQuantity, updateNotes, removeIt
 
       <div className="border-t p-4">
         <div className="space-y-1.5">
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatCurrency(subtotal)}</span>
-          </div>
-          <div className="flex justify-between">
+          </div> */}
+          {/* <div className="flex justify-between">
             <span className="text-muted-foreground">Tax (8.5%)</span>
             <span>{formatCurrency(tax)}</span>
-          </div>
+          </div> */}
           <div className="flex justify-between font-semibold text-lg pt-2">
             <span>Total</span>
             <span>{formatCurrency(total)}</span>

@@ -29,7 +29,7 @@ export function MenuPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   // Fetch categories and menu items
-  const fetchData = async () => {
+  const fetchCategoryData = async () => {
     try {
       setIsLoading(true)
 
@@ -37,12 +37,7 @@ export function MenuPage() {
       const categoriesResponse = await fetch("/api/categories")
       const categoriesData = await categoriesResponse.json()
 
-      // Fetch menu items
-      const menuItemsResponse = await fetch("/api/menu-items")
-      const menuItemsData = await menuItemsResponse.json()
-
       setCategories(categoriesData)
-      setMenuItems(menuItemsData)
 
       // Set default selected category if categories exist
       if (categoriesData.length > 0 && selectedCategory === "all") {
@@ -55,9 +50,36 @@ export function MenuPage() {
     }
   }
 
+  const fetchMenuItemData = async (selectedCategory: string) => {
+    console.log(selectedCategory);
+    try {
+      setIsLoading(true)
+
+      const query = new URLSearchParams();
+
+      if (selectedCategory !== 'all') {
+        query.set('categoryId', selectedCategory)
+      }
+
+      // Fetch menu items
+      const menuItemsResponse = await fetch(`/api/menu-items?${query.toString()}`)
+      const menuItemsData = await menuItemsResponse.json()
+
+      setMenuItems(menuItemsData)
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
-    fetchData()
+    fetchCategoryData()
   }, [])
+
+  useEffect(() => {
+    fetchMenuItemData(selectedCategory)
+  }, [selectedCategory])
 
   // Filter menu items by selected category and search query
   const filteredItems = menuItems.filter(
@@ -120,14 +142,6 @@ export function MenuPage() {
     }))
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
   return (
     <div className="flex flex-col md:flex-row h-[calc(100vh-4rem)]">
       <div className="flex-1 overflow-auto p-4">
@@ -143,8 +157,8 @@ export function MenuPage() {
             />
           </div>
           <div className="flex space-x-2 ml-4">
-            <CreateCategoryDialog onCategoryCreated={fetchData} />
-            <CreateMenuItemDialog onMenuItemCreated={fetchData} />
+            <CreateCategoryDialog onCategoryCreated={fetchCategoryData} />
+            <CreateMenuItemDialog onMenuItemCreated={() => fetchMenuItemData(selectedCategory)} />
           </div>
         </div>
 

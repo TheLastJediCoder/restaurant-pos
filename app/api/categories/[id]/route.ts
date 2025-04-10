@@ -12,19 +12,14 @@ const API_URL = process.env.BACKEND_API_URL
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const id = params.id
+    const response = await fetch(`${API_URL}/categories/${id}`)
+    const data = await response.json()
 
-    // In a real implementation, this would fetch from the backend API
-    // const response = await fetch(`${API_URL}/categories/${id}`)
-    // const data = await response.json()
-
-    // Using mock data for demonstration
-    const category = mockCategories.find((cat) => cat.id === id)
-
-    if (!category) {
+    if (!data) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 })
     }
 
-    return NextResponse.json(category)
+    return NextResponse.json(data)
   } catch (error) {
     console.error("Error fetching category:", error)
     return NextResponse.json({ error: "Failed to fetch category" }, { status: 500 })
