@@ -59,8 +59,10 @@ export function OrderSidebar({ orderItems, updateQuantity, updateNotes, removeIt
         throw new Error("Failed to create order")
       }
 
+      const data = await response.json();
+
       // Navigate to payment page
-      router.push("/pos/payment")
+      router.push(`/pos/payments/${data.id}`)
     } catch (error) {
       console.error("Error creating order:", error)
       // Show error message to user

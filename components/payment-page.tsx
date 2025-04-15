@@ -11,27 +11,38 @@ import type { PaymentMethod } from "@/lib/types"
 /**
  * PaymentPage component - Handles payment processing for orders
  */
-export function PaymentPage() {
+export function PaymentPage({orderId}: {orderId: string}) {
   const router = useRouter()
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Cash")
   const [amountTendered, setAmountTendered] = useState<string>("")
   const [isProcessing, setIsProcessing] = useState(false)
   const [orderTotal, setOrderTotal] = useState(45.99)
 
+  const fetchOrder = async (orderId: string) => {
+    try {
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch order")
+      }
+
+      const data = await response.json();
+
+      setOrderTotal(data.total);
+    } catch (error) {
+      console.error("Error fetching order:", error)
+    }
+  }
+
   // In a real app, we would fetch the current order from context or API
   useEffect(() => {
-    const fetchCurrentOrder = async () => {
-      try {
-        // This would typically come from a context or state management
-        // For demo purposes, we'll use a fixed value
-        setOrderTotal(45.99)
-      } catch (error) {
-        console.error("Error fetching current order:", error)
-      }
-    }
-
-    fetchCurrentOrder()
-  }, [])
+    fetchOrder(orderId)
+  }, [orderId])
 
   // Calculate change
   const calculateChange = () => {

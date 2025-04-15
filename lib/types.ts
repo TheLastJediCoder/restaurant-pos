@@ -56,7 +56,7 @@ export interface UpdateMenuItemRequest {
 }
 
 // Order types
-export type OrderStatus = "Placed" | "In Progress" | "Completed" | "Cancelled" | "Reserved"
+export type OrderStatus = "Payment Pending" | "Placed" | "In Progress" | "Completed" | "Cancelled" | "Reserved"
 export type PaymentMethod = "Cash" | "Credit Card" | "Mobile Payment"
 
 export interface Order {
