@@ -1,7 +1,11 @@
 'use client';
 
 import { PaymentPage } from "@/components/payment-page"
+import React from "react";
 
-export default async function PaymentPagePos({ params }: { params: { id: string } }) {
-  return <PaymentPage orderId={params.id}/>
+
+export default function PaymentPagePos({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
+
+  return <PaymentPage orderId={id}/>
 }

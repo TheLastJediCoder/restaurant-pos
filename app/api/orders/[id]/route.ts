@@ -8,9 +8,9 @@ const API_URL = process.env.BACKEND_API_URL
  * GET /api/orders/:id
  * Get an order by ID
  */
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = params.id
+    const id = (await params).id
     const response = await fetch(`${API_URL}/orders/${id}`)
     const data = await response.json()
 

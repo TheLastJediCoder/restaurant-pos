@@ -51,7 +51,6 @@ export function MenuPage() {
   }
 
   const fetchMenuItemData = async (selectedCategory: string) => {
-    console.log(selectedCategory);
     try {
       setIsLoading(true)
 

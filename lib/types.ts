@@ -64,6 +64,7 @@ export interface Order {
   total: number
   status: OrderStatus
   paymentMethod: PaymentMethod
+  paymentPending: boolean
   createdAt: string
   updatedAt: string
   orderItems: OrderItem[]

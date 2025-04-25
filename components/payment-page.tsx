@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { formatCurrency } from "@/lib/utils"
-import type { PaymentMethod } from "@/lib/types"
+import { Order, type PaymentMethod } from "@/lib/types"
 
 /**
  * PaymentPage component - Handles payment processing for orders
@@ -16,7 +16,7 @@ export function PaymentPage({orderId}: {orderId: string}) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Cash")
   const [amountTendered, setAmountTendered] = useState<string>("")
   const [isProcessing, setIsProcessing] = useState(false)
-  const [orderTotal, setOrderTotal] = useState(45.99)
+  const [order, setOrder] = useState<Order | undefined>(undefined)
 
   const fetchOrder = async (orderId: string) => {
     try {
@@ -33,7 +33,7 @@ export function PaymentPage({orderId}: {orderId: string}) {
 
       const data = await response.json();
 
-      setOrderTotal(data.total);
+      setOrder(data);
     } catch (error) {
       console.error("Error fetching order:", error)
     }
@@ -46,21 +46,34 @@ export function PaymentPage({orderId}: {orderId: string}) {
 
   // Calculate change
   const calculateChange = () => {
+    if (!order) return 0;
+
     const tendered = Number.parseFloat(amountTendered) || 0
-    return Math.max(0, tendered - orderTotal)
+    return Math.max(0, tendered - order?.total)
   }
 
   // Handle payment processing
   const handleProcessPayment = async () => {
+    if (!order) return
+    
     setIsProcessing(true)
 
     try {
-      // In a real app, this would process the payment with the backend
-      // For demo purposes, we'll just simulate a delay
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      // Create order via API
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paymentMethod: paymentMethod }),
+      });
 
-      // Navigate back to the menu page
-      router.push("/pos")
+      if (!response.ok) {
+        throw new Error("Failed to process payment")
+      } else {
+        // Navigate back to the menu page
+        router.push("/pos")
+      }
     } catch (error) {
       console.error("Error processing payment:", error)
     } finally {
@@ -113,15 +126,15 @@ export function PaymentPage({orderId}: {orderId: string}) {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formatCurrency(orderTotal * 0.92)}</span>
+                  <span>{formatCurrency((order?.total || 0) * 0.92)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Tax (8.5%)</span>
-                  <span>{formatCurrency(orderTotal * 0.08)}</span>
+                  <span>{formatCurrency((order?.total || 0) * 0.08)}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t">
                   <span className="font-semibold text-lg">Total</span>
-                  <span className="font-semibold text-lg">{formatCurrency(orderTotal)}</span>
+                  <span className="font-semibold text-lg">{formatCurrency((order?.total || 0))}</span>
                 </div>
               </div>
             </CardContent>
@@ -200,7 +213,7 @@ export function PaymentPage({orderId}: {orderId: string}) {
               size="lg"
               className="h-16"
               disabled={
-                isProcessing || (paymentMethod === "Cash" && (Number.parseFloat(amountTendered) || 0) < orderTotal)
+                isProcessing || (paymentMethod === "Cash" && (Number.parseFloat(amountTendered) || 0) < (order?.total || 0))
               }
               onClick={handleProcessPayment}
             >
