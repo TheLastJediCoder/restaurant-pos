@@ -180,7 +180,7 @@ export function MenuPage() {
                   onClick={() => addToOrder(item)}
                 >
                   <div className="aspect-square relative">
-                    <Image src={item.imageUrl || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                    <Image src={item.imagePath || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
                   </div>
                   <CardContent className="p-3">
                     <h3 className="font-medium text-sm">{item.name}</h3>
@@ -202,7 +202,7 @@ export function MenuPage() {
                     onClick={() => addToOrder(item)}
                   >
                     <div className="aspect-square relative">
-                      <Image src={item.imageUrl || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                      <Image src={item.imagePath || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
                     </div>
                     <CardContent className="p-3">
                       <h3 className="font-medium text-sm">{item.name}</h3>

@@ -7,14 +7,14 @@ export interface Table {
 }
 
 // Category types
-export interface Category {
-  id: string
-  name: string
-  description: string
-  active: boolean
-  createdAt: string
-  menuItems: MenuItem[]
-}
+  export interface Category {
+    id: string
+    name: string
+    description: string
+    active: boolean
+    createdAt: string
+    menuItems: MenuItem[]
+  }
 
 export interface CreateCategoryRequest {
   name: string
@@ -32,7 +32,7 @@ export interface MenuItem {
   name: string
   price: number
   description: string
-  imageUrl: string
+  imagePath?: string
   inStock: boolean
   createdAt: string
   updatedAt: string
