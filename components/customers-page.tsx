@@ -1,65 +1,72 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { Search, Plus, Phone, Mail, MapPin } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { OrderSidebar } from "@/components/order-sidebar"
-import type { MenuItem, User } from "@/lib/types"
+import { useState, useEffect } from 'react';
+import { Search, Plus, Phone, Mail, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { OrderSidebar } from '@/components/order-sidebar';
+import type { MenuItem, User } from '@/lib/types';
 
 /**
  * CustomersPage component - Displays customer list and allows selecting a customer for an order
  */
 export function CustomersPage() {
-  const [customers, setCustomers] = useState<User[]>([])
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null)
+  const [customers, setCustomers] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [currentOrder, setCurrentOrder] = useState<{
-    items: Array<{ menuItem: MenuItem; quantity: number; notes: string }>
+    items: Array<{ menuItem: MenuItem; quantity: number; notes: string }>;
   }>({
     items: [],
-  })
-  const [isLoading, setIsLoading] = useState(true)
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch customers
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        setIsLoading(true)
-        const response = await fetch("/api/users")
-        const data = await response.json()
-        setCustomers(data)
+        setIsLoading(true);
+        const response = await fetch('/api/users');
+        const data = await response.json();
+        setCustomers(data);
       } catch (error) {
-        console.error("Error fetching customers:", error)
+        console.error('Error fetching customers:', error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchCustomers()
-  }, [])
+    fetchCustomers();
+  }, []);
 
   // Filter customers by search query
   const filteredCustomers = customers.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+  );
 
   // Handle customer selection
   const handleSelectCustomer = (customerId: string) => {
-    setSelectedCustomer(customerId === selectedCustomer ? null : customerId)
-  }
+    setSelectedCustomer(customerId === selectedCustomer ? null : customerId);
+  };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -97,16 +104,19 @@ export function CustomersPage() {
             </TableHeader>
             <TableBody>
               {filteredCustomers.map((customer) => (
-                <TableRow key={customer.id} className={selectedCustomer === customer.id ? "bg-muted/50" : undefined}>
+                <TableRow
+                  key={customer.id}
+                  className={selectedCustomer === customer.id ? 'bg-muted/50' : undefined}
+                >
                   <TableCell>
                     <div className="flex items-center">
                       <Avatar className="h-8 w-8 mr-2">
                         <AvatarImage src="/placeholder.svg" alt={customer.name} />
                         <AvatarFallback>
                           {customer.name
-                            .split(" ")
+                            .split(' ')
                             .map((n) => n[0])
-                            .join("")}
+                            .join('')}
                         </AvatarFallback>
                       </Avatar>
                       <span>{customer.name}</span>
@@ -116,11 +126,11 @@ export function CustomersPage() {
                   <TableCell className="capitalize">{customer.role}</TableCell>
                   <TableCell>
                     <Button
-                      variant={selectedCustomer === customer.id ? "default" : "outline"}
+                      variant={selectedCustomer === customer.id ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => handleSelectCustomer(customer.id)}
                     >
-                      {selectedCustomer === customer.id ? "Selected" : "Select"}
+                      {selectedCustomer === customer.id ? 'Selected' : 'Select'}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -157,22 +167,26 @@ export function CustomersPage() {
         updateQuantity={(menuItemId, quantity) => {
           setCurrentOrder((prev) => ({
             ...prev,
-            items: prev.items.map((item) => (item.menuItem.id === menuItemId ? { ...item, quantity } : item)),
-          }))
+            items: prev.items.map((item) =>
+              item.menuItem.id === menuItemId ? { ...item, quantity } : item,
+            ),
+          }));
         }}
         updateNotes={(menuItemId, notes) => {
           setCurrentOrder((prev) => ({
             ...prev,
-            items: prev.items.map((item) => (item.menuItem.id === menuItemId ? { ...item, notes } : item)),
-          }))
+            items: prev.items.map((item) =>
+              item.menuItem.id === menuItemId ? { ...item, notes } : item,
+            ),
+          }));
         }}
         removeItem={(menuItemId) => {
           setCurrentOrder((prev) => ({
             ...prev,
             items: prev.items.filter((item) => item.menuItem.id !== menuItemId),
-          }))
+          }));
         }}
       />
     </div>
-  )
+  );
 }

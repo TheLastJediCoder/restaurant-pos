@@ -23,40 +23,40 @@ A modern, sleek, and responsive Point of Sale system for restaurants built with 
 
 \`\`\`
 restaurant-pos/
-├── app/                    # Next.js App Router
-│   ├── api/                # API routes (proxy to backend)
-│   │   ├── auth/           # Authentication endpoints
-│   │   ├── categories/     # Category management endpoints
-│   │   ├── menu-items/     # Menu item management endpoints
-│   │   ├── orders/         # Order management endpoints
-│   │   ├── tables/         # Table management endpoints
-│   │   └── users/          # User management endpoints
-│   ├── pos/                # POS routes
-│   │   ├── customers/      # Customer management
-│   │   ├── tables/         # Table management
-│   │   ├── orders/         # Order management
-│   │   ├── offline/        # Offline orders
-│   │   ├── payment/        # Payment processing
-│   │   └── layout.tsx      # POS layout
-│   ├── layout.tsx          # Root layout
-│   └── page.tsx            # Home page
-├── components/             # React components
-│   ├── ui/                 # UI components from Shadcn
-│   ├── menu-page.tsx       # Menu page component
-│   ├── customers-page.tsx  # Customers page component
-│   ├── tables-page.tsx     # Tables page component
-│   ├── orders-page.tsx     # Orders page component
-│   ├── offline-orders-page.tsx # Offline orders page component
-│   ├── payment-page.tsx    # Payment page component
-│   ├── order-sidebar.tsx   # Order sidebar component
-│   ├── main-nav.tsx        # Main navigation component
-│   └── user-nav.tsx        # User navigation component
-├── lib/                    # Utility functions and types
-│   ├── mock-data.ts        # Mock data for development
-│   ├── types.ts            # TypeScript types
-│   └── utils.ts            # Utility functions
-├── public/                 # Static assets
-└── README.md               # Project documentation
+├── app/ # Next.js App Router
+│ ├── api/ # API routes (proxy to backend)
+│ │ ├── auth/ # Authentication endpoints
+│ │ ├── categories/ # Category management endpoints
+│ │ ├── menu-items/ # Menu item management endpoints
+│ │ ├── orders/ # Order management endpoints
+│ │ ├── tables/ # Table management endpoints
+│ │ └── users/ # User management endpoints
+│ ├── pos/ # POS routes
+│ │ ├── customers/ # Customer management
+│ │ ├── tables/ # Table management
+│ │ ├── orders/ # Order management
+│ │ ├── offline/ # Offline orders
+│ │ ├── payment/ # Payment processing
+│ │ └── layout.tsx # POS layout
+│ ├── layout.tsx # Root layout
+│ └── page.tsx # Home page
+├── components/ # React components
+│ ├── ui/ # UI components from Shadcn
+│ ├── menu-page.tsx # Menu page component
+│ ├── customers-page.tsx # Customers page component
+│ ├── tables-page.tsx # Tables page component
+│ ├── orders-page.tsx # Orders page component
+│ ├── offline-orders-page.tsx # Offline orders page component
+│ ├── payment-page.tsx # Payment page component
+│ ├── order-sidebar.tsx # Order sidebar component
+│ ├── main-nav.tsx # Main navigation component
+│ └── user-nav.tsx # User navigation component
+├── lib/ # Utility functions and types
+│ ├── mock-data.ts # Mock data for development
+│ ├── types.ts # TypeScript types
+│ └── utils.ts # Utility functions
+├── public/ # Static assets
+└── README.md # Project documentation
 \`\`\`
 
 ## Getting Started
@@ -77,14 +77,18 @@ restaurant-pos/
 2. Install dependencies:
    \`\`\`bash
    npm install
+
    # or
+
    yarn install
    \`\`\`
 
 3. Start the development server:
    \`\`\`bash
    npm run dev
+
    # or
+
    yarn dev
    \`\`\`
 
@@ -125,9 +129,9 @@ The theme is defined in `app/globals.css`. You can modify the color variables to
 
 \`\`\`css
 :root {
-  --primary: 24 95% 53%;
-  --primary-foreground: 210 40% 98%;
-  /* Other color variables */
+--primary: 24 95% 53%;
+--primary-foreground: 210 40% 98%;
+/_ Other color variables _/
 }
 \`\`\`
 

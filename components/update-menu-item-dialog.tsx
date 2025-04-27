@@ -23,25 +23,33 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import type { Category } from '@/lib/types';
+import type { Category, MenuItem } from '@/lib/types';
 
-interface CreateMenuItemDialogProps {
-  onMenuItemCreated: () => void;
+interface UpdateMenuItemDialogProps {
+  menuItem: MenuItem;
+  onMenuitemUpdated: (arg1: MenuItem) => void;
 }
 
-export function CreateMenuItemDialog({ onMenuItemCreated }: CreateMenuItemDialogProps) {
+export function UpdateMenuItemDialog({ menuItem, onMenuitemUpdated }: UpdateMenuItemDialogProps) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [categoryId, setCategoryId] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [categoryId, setCategoryId] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+
+  const setForm = (menuItem: MenuItem) => {
+    setName(menuItem.name);
+    setDescription(menuItem.description);
+    setPrice(menuItem.price.toString());
+    setCategoryId(menuItem.categoryId);
+  };
 
   // Fetch categories when dialog opens
   useEffect(() => {
@@ -108,9 +116,18 @@ export function CreateMenuItemDialog({ onMenuItemCreated }: CreateMenuItemDialog
       setIsSubmitting(true);
 
       const formData = new FormData();
-      formData.append('name', name);
-      formData.append('price', price);
-      formData.append('categoryId', categoryId);
+
+      if (name !== menuItem.name) {
+        formData.append('name', name);
+      }
+
+      if (parseInt(price) !== menuItem.price) {
+        formData.append('price', price);
+      }
+
+      if (categoryId !== menuItem.categoryId) {
+        formData.append('categoryId', categoryId);
+      }
 
       if (description) {
         formData.append('description', description);
@@ -120,19 +137,21 @@ export function CreateMenuItemDialog({ onMenuItemCreated }: CreateMenuItemDialog
         formData.append('file', file);
       }
 
-      const response = await fetch('/api/menu-items', {
-        method: 'POST',
+      const response = await fetch(`/api/menu-items/${menuItem.id}`, {
+        method: 'PATCH',
         body: formData,
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to create menu item');
+        throw new Error(error.message || 'Failed to update menu item');
       }
+
+      const data = await response.json();
 
       toast({
         title: 'Success',
-        description: 'Menu item created successfully',
+        description: 'Menu item updated successfully',
       });
 
       // Reset form
@@ -144,12 +163,12 @@ export function CreateMenuItemDialog({ onMenuItemCreated }: CreateMenuItemDialog
       setOpen(false);
 
       // Notify parent component
-      onMenuItemCreated();
+      onMenuitemUpdated(data);
     } catch (error) {
       console.error('Error creating menu item:', error);
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to create menu item',
+        description: error instanceof Error ? error.message : 'Failed to update menu item',
         variant: 'destructive',
       });
     } finally {
@@ -160,17 +179,15 @@ export function CreateMenuItemDialog({ onMenuItemCreated }: CreateMenuItemDialog
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add Menu Item
+        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setForm(menuItem)}>
+          <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Menu Item</DialogTitle>
-            <DialogDescription>
-              Add a new item to your menu. Click save when you're done.
-            </DialogDescription>
+            <DialogTitle>Update Menu Item</DialogTitle>
+            <DialogDescription>Update menu item. Click save when you're done.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
@@ -233,23 +250,23 @@ export function CreateMenuItemDialog({ onMenuItemCreated }: CreateMenuItemDialog
                 placeholder="Brief description of this menu item"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Image
-              </Label>
-              <Input
-                id="image"
-                type="file"
-                accept="image/*"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                className="col-span-3"
-                placeholder="Image of this menu item"
-              />
-            </div>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="description" className="text-right">
+              Image
+            </Label>
+            <Input
+              id="image"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="col-span-3"
+              placeholder="Image of this menu item"
+            />
           </div>
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting || isLoading}>
-              {isSubmitting ? 'Creating...' : 'Create Menu Item'}
+              {isSubmitting ? 'Updating...' : 'Update Menu Item'}
             </Button>
           </DialogFooter>
         </form>

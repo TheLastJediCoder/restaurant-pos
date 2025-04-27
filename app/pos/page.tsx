@@ -1,5 +1,5 @@
-import { MenuPage } from "@/components/menu-page"
+import { MenuPage } from '@/components/menu-page';
 
 export default function PosPage() {
-  return <MenuPage />
+  return <MenuPage />;
 }

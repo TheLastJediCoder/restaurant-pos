@@ -1,30 +1,35 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Minus, Plus, Trash2, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { formatCurrency } from "@/lib/utils"
-import type { MenuItem } from "@/lib/types"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Minus, Plus, Trash2, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { formatCurrency } from '@/lib/utils';
+import type { MenuItem } from '@/lib/types';
 
 interface OrderSidebarProps {
-  orderItems: Array<{ menuItem: MenuItem; quantity: number; notes: string }>
-  updateQuantity: (menuItemId: string, quantity: number) => void
-  updateNotes: (menuItemId: string, notes: string) => void
-  removeItem: (menuItemId: string) => void
+  orderItems: Array<{ menuItem: MenuItem; quantity: number; notes: string }>;
+  updateQuantity: (menuItemId: string, quantity: number) => void;
+  updateNotes: (menuItemId: string, notes: string) => void;
+  removeItem: (menuItemId: string) => void;
 }
 
 /**
  * OrderSidebar component - Displays the current order and allows for checkout
  */
-export function OrderSidebar({ orderItems, updateQuantity, updateNotes, removeItem }: OrderSidebarProps) {
-  const router = useRouter()
-  const [isNotesOpen, setIsNotesOpen] = useState<string | null>(null)
-  const [isProcessing, setIsProcessing] = useState(false)
+export function OrderSidebar({
+  orderItems,
+  updateQuantity,
+  updateNotes,
+  removeItem,
+}: OrderSidebarProps) {
+  const router = useRouter();
+  const [isNotesOpen, setIsNotesOpen] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Calculate subtotal
-  const total = orderItems.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0)
+  const total = orderItems.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0);
 
   // Calculate tax (assuming 8.5% tax rate)
   // const taxRate = 0.085
@@ -35,16 +40,16 @@ export function OrderSidebar({ orderItems, updateQuantity, updateNotes, removeIt
 
   // Handle checkout
   const handleCheckout = async () => {
-    if (orderItems.length === 0) return
+    if (orderItems.length === 0) return;
 
-    setIsProcessing(true)
+    setIsProcessing(true);
 
     try {
       // Create order via API
-      const response = await fetch("/api/orders", {
-        method: "POST",
+      const response = await fetch('/api/orders', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           items: orderItems.map((item) => ({
@@ -53,23 +58,23 @@ export function OrderSidebar({ orderItems, updateQuantity, updateNotes, removeIt
             notes: item.notes,
           })),
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to create order")
+        throw new Error('Failed to create order');
       }
 
       const data = await response.json();
 
       // Navigate to payment page
-      router.push(`/pos/payments/${data.id}`)
+      router.push(`/pos/payments/${data.id}`);
     } catch (error) {
-      console.error("Error creating order:", error)
+      console.error('Error creating order:', error);
       // Show error message to user
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   return (
     <div className="w-full md:w-96 border-l bg-background flex flex-col h-full">
@@ -90,10 +95,19 @@ export function OrderSidebar({ orderItems, updateQuantity, updateNotes, removeIt
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <h3 className="font-medium">{item.menuItem.name}</h3>
-                    <p className="text-sm text-muted-foreground">{formatCurrency(item.menuItem.price)} each</p>
-                    {item.notes && <p className="text-xs text-muted-foreground mt-1">Note: {item.notes}</p>}
+                    <p className="text-sm text-muted-foreground">
+                      {formatCurrency(item.menuItem.price)} each
+                    </p>
+                    {item.notes && (
+                      <p className="text-xs text-muted-foreground mt-1">Note: {item.notes}</p>
+                    )}
                   </div>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeItem(item.menuItem.id)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => removeItem(item.menuItem.id)}
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -126,9 +140,11 @@ export function OrderSidebar({ orderItems, updateQuantity, updateNotes, removeIt
                       className="h-7 text-xs"
                       onClick={() => setIsNotesOpen(item.menuItem.id)}
                     >
-                      {item.notes ? "Edit Note" : "Add Note"}
+                      {item.notes ? 'Edit Note' : 'Add Note'}
                     </Button>
-                    <span className="font-medium ml-2">{formatCurrency(item.menuItem.price * item.quantity)}</span>
+                    <span className="font-medium ml-2">
+                      {formatCurrency(item.menuItem.price * item.quantity)}
+                    </span>
                   </div>
                 </div>
 
@@ -175,10 +191,10 @@ export function OrderSidebar({ orderItems, updateQuantity, updateNotes, removeIt
         <div className="grid grid-cols-2 gap-2 mt-4">
           <Button variant="outline">Cancel</Button>
           <Button disabled={orderItems.length === 0 || isProcessing} onClick={handleCheckout}>
-            {isProcessing ? "Processing..." : "Checkout"}
+            {isProcessing ? 'Processing...' : 'Checkout'}
           </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }

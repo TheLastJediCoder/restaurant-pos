@@ -1,6 +1,6 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CategoryManagement } from "@/components/category-management"
-import { MenuItemManagement } from "@/components/menu-item-management"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CategoryManagement } from '@/components/category-management';
+import { MenuItemManagement } from '@/components/menu-item-management';
 
 export default function ManagementPage() {
   return (
@@ -22,5 +22,5 @@ export default function ManagementPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

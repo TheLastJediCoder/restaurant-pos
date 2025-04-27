@@ -1,95 +1,102 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { Search, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { OrderSidebar } from "@/components/order-sidebar"
-import type { MenuItem, Table } from "@/lib/types"
+import { useState, useEffect } from 'react';
+import { Search, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { OrderSidebar } from '@/components/order-sidebar';
+import type { MenuItem, Table } from '@/lib/types';
 
 /**
  * TablesPage component - Displays tables and their status
  */
 export function TablesPage() {
-  const [tables, setTables] = useState<Table[]>([])
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedTable, setSelectedTable] = useState<string | null>(null)
+  const [tables, setTables] = useState<Table[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [currentOrder, setCurrentOrder] = useState<{
-    items: Array<{ menuItem: MenuItem; quantity: number; notes: string }>
+    items: Array<{ menuItem: MenuItem; quantity: number; notes: string }>;
   }>({
     items: [],
-  })
-  const [isLoading, setIsLoading] = useState(true)
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch tables
   useEffect(() => {
     const fetchTables = async () => {
       try {
-        setIsLoading(true)
-        const response = await fetch("/api/tables")
-        const data = await response.json()
-        setTables(data)
+        setIsLoading(true);
+        const response = await fetch('/api/tables');
+        const data = await response.json();
+        setTables(data);
       } catch (error) {
-        console.error("Error fetching tables:", error)
+        console.error('Error fetching tables:', error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchTables()
-  }, [])
+    fetchTables();
+  }, []);
 
   // Filter tables by search query
-  const filteredTables = tables.filter((table) => table.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredTables = tables.filter((table) =>
+    table.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   // Handle table selection
   const handleSelectTable = (tableId: string) => {
-    setSelectedTable(tableId === selectedTable ? null : tableId)
-  }
+    setSelectedTable(tableId === selectedTable ? null : tableId);
+  };
 
   // Get status color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Available":
-        return "bg-success text-success-foreground"
-      case "Occupied":
-        return "bg-destructive text-destructive-foreground"
-      case "Reserved":
-        return "bg-amber-500 text-white"
+      case 'Available':
+        return 'bg-success text-success-foreground';
+      case 'Occupied':
+        return 'bg-destructive text-destructive-foreground';
+      case 'Reserved':
+        return 'bg-amber-500 text-white';
       default:
-        return "bg-muted text-muted-foreground"
+        return 'bg-muted text-muted-foreground';
     }
-  }
+  };
 
   // Update table status
-  const updateTableStatus = async (tableId: string, status: "Available" | "Occupied" | "Reserved") => {
+  const updateTableStatus = async (
+    tableId: string,
+    status: 'Available' | 'Occupied' | 'Reserved',
+  ) => {
     try {
       const response = await fetch(`/api/tables/${tableId}`, {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ status }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to update table status")
+        throw new Error('Failed to update table status');
       }
 
       // Update local state
-      setTables((prevTables) => prevTables.map((table) => (table.id === tableId ? { ...table, status } : table)))
+      setTables((prevTables) =>
+        prevTables.map((table) => (table.id === tableId ? { ...table, status } : table)),
+      );
     } catch (error) {
-      console.error("Error updating table status:", error)
+      console.error('Error updating table status:', error);
     }
-  }
+  };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -117,12 +124,14 @@ export function TablesPage() {
             <Card
               key={table.id}
               className={`cursor-pointer hover:shadow-md transition-shadow ${
-                selectedTable === table.id ? "ring-2 ring-primary" : ""
+                selectedTable === table.id ? 'ring-2 ring-primary' : ''
               }`}
               onClick={() => handleSelectTable(table.id)}
             >
               <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                <div className={`w-full py-1 mb-2 text-xs font-medium ${getStatusColor(table.status)}`}>
+                <div
+                  className={`w-full py-1 mb-2 text-xs font-medium ${getStatusColor(table.status)}`}
+                >
                   {table.status}
                 </div>
                 <h3 className="font-semibold text-lg">{table.name}</h3>
@@ -138,15 +147,29 @@ export function TablesPage() {
         {selectedTable && (
           <div className="mt-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold">{tables.find((table) => table.id === selectedTable)?.name}</h2>
+              <h2 className="text-lg font-semibold">
+                {tables.find((table) => table.id === selectedTable)?.name}
+              </h2>
               <div className="flex space-x-2">
-                <Button variant="outline" size="sm" onClick={() => updateTableStatus(selectedTable, "Reserved")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => updateTableStatus(selectedTable, 'Reserved')}
+                >
                   Reserve
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => updateTableStatus(selectedTable, "Available")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => updateTableStatus(selectedTable, 'Available')}
+                >
                   Mark as Available
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => updateTableStatus(selectedTable, "Occupied")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => updateTableStatus(selectedTable, 'Occupied')}
+                >
                   Mark as Occupied
                 </Button>
               </div>
@@ -160,22 +183,26 @@ export function TablesPage() {
         updateQuantity={(menuItemId, quantity) => {
           setCurrentOrder((prev) => ({
             ...prev,
-            items: prev.items.map((item) => (item.menuItem.id === menuItemId ? { ...item, quantity } : item)),
-          }))
+            items: prev.items.map((item) =>
+              item.menuItem.id === menuItemId ? { ...item, quantity } : item,
+            ),
+          }));
         }}
         updateNotes={(menuItemId, notes) => {
           setCurrentOrder((prev) => ({
             ...prev,
-            items: prev.items.map((item) => (item.menuItem.id === menuItemId ? { ...item, notes } : item)),
-          }))
+            items: prev.items.map((item) =>
+              item.menuItem.id === menuItemId ? { ...item, notes } : item,
+            ),
+          }));
         }}
         removeItem={(menuItemId) => {
           setCurrentOrder((prev) => ({
             ...prev,
             items: prev.items.filter((item) => item.menuItem.id !== menuItemId),
-          }))
+          }));
         }}
       />
     </div>
-  )
+  );
 }

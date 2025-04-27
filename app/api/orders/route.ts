@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server"
-import type { CreateOrderRequest } from "@/lib/types"
+import { NextResponse } from 'next/server';
+import type { CreateOrderRequest } from '@/lib/types';
 
 // Base API URL - would typically come from environment variables
-const API_URL = process.env.BACKEND_API_URL
+const API_URL = process.env.BACKEND_API_URL;
 
 /**
  * GET /api/orders
@@ -10,13 +10,13 @@ const API_URL = process.env.BACKEND_API_URL
  */
 export async function GET() {
   try {
-    const response = await fetch(`${API_URL}/orders`)
-    const data = await response.json()
+    const response = await fetch(`${API_URL}/orders`);
+    const data = await response.json();
 
-    return NextResponse.json(data)
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Error fetching orders:", error)
-    return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 })
+    console.error('Error fetching orders:', error);
+    return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
   }
 }
 
@@ -26,23 +26,26 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const body: CreateOrderRequest = await request.json()
+    const body: CreateOrderRequest = await request.json();
 
     // Validate request body
     if (!body.items || !Array.isArray(body.items) || body.items.length === 0) {
-      return NextResponse.json({ error: "Items are required and must be a non-empty array" }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Items are required and must be a non-empty array' },
+        { status: 400 },
+      );
     }
 
     const response = await fetch(`${API_URL}/orders`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
-    })
-    const data = await response.json()
+    });
+    const data = await response.json();
 
-    return NextResponse.json(data, { status: 201 })
+    return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error("Error creating order:", error)
-    return NextResponse.json({ error: "Failed to create order" }, { status: 500 })
+    console.error('Error creating order:', error);
+    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
   }
 }

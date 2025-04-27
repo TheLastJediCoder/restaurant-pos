@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server"
-import { mockTables } from "@/lib/mock-data"
-import { generateId } from "@/lib/utils"
-import type { Table } from "@/lib/types"
+import { NextResponse } from 'next/server';
+import { mockTables } from '@/lib/mock-data';
+import { generateId } from '@/lib/utils';
+import type { Table } from '@/lib/types';
 
 // Base API URL - would typically come from environment variables
-const API_URL = process.env.BACKEND_API_URL
+const API_URL = process.env.BACKEND_API_URL;
 
 /**
  * GET /api/tables
@@ -17,10 +17,10 @@ export async function GET() {
     // const data = await response.json()
 
     // Using mock data for demonstration
-    return NextResponse.json(mockTables)
+    return NextResponse.json(mockTables);
   } catch (error) {
-    console.error("Error fetching tables:", error)
-    return NextResponse.json({ error: "Failed to fetch tables" }, { status: 500 })
+    console.error('Error fetching tables:', error);
+    return NextResponse.json({ error: 'Failed to fetch tables' }, { status: 500 });
   }
 }
 
@@ -30,11 +30,11 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const body: { name: string; capacity: number } = await request.json()
+    const body: { name: string; capacity: number } = await request.json();
 
     // Validate request body
     if (!body.name || !body.capacity) {
-      return NextResponse.json({ error: "Name and capacity are required" }, { status: 400 })
+      return NextResponse.json({ error: 'Name and capacity are required' }, { status: 400 });
     }
 
     // In a real implementation, this would create a table in the backend API
@@ -50,14 +50,14 @@ export async function POST(request: Request) {
       id: generateId(),
       name: body.name,
       capacity: body.capacity,
-      status: "Available",
-    }
+      status: 'Available',
+    };
 
-    mockTables.push(newTable)
+    mockTables.push(newTable);
 
-    return NextResponse.json(newTable, { status: 201 })
+    return NextResponse.json(newTable, { status: 201 });
   } catch (error) {
-    console.error("Error creating table:", error)
-    return NextResponse.json({ error: "Failed to create table" }, { status: 500 })
+    console.error('Error creating table:', error);
+    return NextResponse.json({ error: 'Failed to create table' }, { status: 500 });
   }
 }

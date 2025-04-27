@@ -16,19 +16,26 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus } from 'lucide-react';
+import { Edit, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { Category } from '@/lib/types';
 
-interface CreateCategoryDialogProps {
-  onCategoryCreated: () => void;
+interface UpdateCategoryDialogProps {
+  category: Category;
+  onCategoryUpdated: (arg1: Category) => void;
 }
 
-export function CreateCategoryDialog({ onCategoryCreated }: CreateCategoryDialogProps) {
+export function UpdateCategoryDialog({ category, onCategoryUpdated }: UpdateCategoryDialogProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+
+  const setForm = (category: Category) => {
+    setName(category.name);
+    setDescription(category.description);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,8 +52,8 @@ export function CreateCategoryDialog({ onCategoryCreated }: CreateCategoryDialog
     try {
       setIsSubmitting(true);
 
-      const response = await fetch('/api/categories', {
-        method: 'POST',
+      const response = await fetch(`/api/categories/${category.id}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -58,12 +65,14 @@ export function CreateCategoryDialog({ onCategoryCreated }: CreateCategoryDialog
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to create category');
+        throw new Error(error.message || 'Failed to update category');
       }
+
+      const data = await response.json();
 
       toast({
         title: 'Success',
-        description: 'Category created successfully',
+        description: 'Category updated successfully',
       });
 
       // Reset form
@@ -74,12 +83,12 @@ export function CreateCategoryDialog({ onCategoryCreated }: CreateCategoryDialog
       setOpen(false);
 
       // Notify parent component
-      onCategoryCreated();
+      onCategoryUpdated(data);
     } catch (error) {
-      console.error('Error creating category:', error);
+      console.error('Error Updating category:', error);
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to create category',
+        description: error instanceof Error ? error.message : 'Failed to Update category',
         variant: 'destructive',
       });
     } finally {
@@ -90,16 +99,16 @@ export function CreateCategoryDialog({ onCategoryCreated }: CreateCategoryDialog
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add Category
+        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setForm(category)}>
+          <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Category</DialogTitle>
+            <DialogTitle>Update Category</DialogTitle>
             <DialogDescription>
-              Add a new category for menu items. Click save when you're done.
+              Update category for menu items. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -130,8 +139,13 @@ export function CreateCategoryDialog({ onCategoryCreated }: CreateCategoryDialog
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create Category'}
+            <Button
+              type="submit"
+              disabled={
+                isSubmitting || (name === category.name && description === category.description)
+              }
+            >
+              {isSubmitting ? 'Updating...' : 'Update Category'}
             </Button>
           </DialogFooter>
         </form>

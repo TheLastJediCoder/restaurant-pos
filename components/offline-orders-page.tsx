@@ -1,82 +1,89 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card } from "@/components/ui/card"
-import { formatCurrency, formatDate, formatTime } from "@/lib/utils"
-import type { Order } from "@/lib/types"
+import { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Card } from '@/components/ui/card';
+import { formatCurrency, formatDate, formatTime } from '@/lib/utils';
+import type { Order } from '@/lib/types';
 
 /**
  * OfflineOrdersPage component - Displays orders that were created while offline
  */
 export function OfflineOrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([])
-  const [searchQuery, setSearchQuery] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        setIsLoading(true)
+        setIsLoading(true);
 
         // In a real app, this would fetch from local storage or IndexedDB
         // For demo purposes, we'll fetch from the API
-        const response = await fetch("/api/orders")
-        const data = await response.json()
+        const response = await fetch('/api/orders');
+        const data = await response.json();
 
         // Filter to just show a few orders as "offline" orders
-        setOrders(data.slice(0, 3))
+        setOrders(data.slice(0, 3));
       } catch (error) {
-        console.error("Error fetching orders:", error)
+        console.error('Error fetching orders:', error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchOrders()
-  }, [])
+    fetchOrders();
+  }, []);
 
   // Filter orders by search query
   const filteredOrders = orders.filter(
     (order) =>
-      searchQuery === "" ||
+      searchQuery === '' ||
       order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (order.table && order.table.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (order.customer && order.customer.name.toLowerCase().includes(searchQuery.toLowerCase())),
-  )
+  );
 
   // Simulate syncing an order
   const syncOrder = async (orderId: string) => {
     try {
       // In a real app, this would sync the order with the backend
       // For demo purposes, we'll just remove it from the list
-      setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderId))
+      setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderId));
     } catch (error) {
-      console.error("Error syncing order:", error)
+      console.error('Error syncing order:', error);
     }
-  }
+  };
 
   // Simulate syncing all orders
   const syncAllOrders = async () => {
     try {
       // In a real app, this would sync all orders with the backend
       // For demo purposes, we'll just clear the list
-      setOrders([])
+      setOrders([]);
     } catch (error) {
-      console.error("Error syncing all orders:", error)
+      console.error('Error syncing all orders:', error);
     }
-  }
+  };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -122,11 +129,13 @@ export function OfflineOrdersPage() {
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>{formatDate(order.createdAt)}</TableCell>
                   <TableCell>{formatTime(order.createdAt)}</TableCell>
-                  <TableCell>{order.table || "N/A"}</TableCell>
-                  <TableCell>{order.customer ? order.customer.name : "N/A"}</TableCell>
+                  <TableCell>{order.table || 'N/A'}</TableCell>
+                  <TableCell>{order.customer ? order.customer.name : 'N/A'}</TableCell>
                   <TableCell>{formatCurrency(order.total)}</TableCell>
                   <TableCell>
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-amber-500 text-white">Pending</span>
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-amber-500 text-white">
+                      Pending
+                    </span>
                   </TableCell>
                   <TableCell>
                     <Button variant="outline" size="sm" onClick={() => syncOrder(order.id)}>
@@ -169,5 +178,5 @@ export function OfflineOrdersPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

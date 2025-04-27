@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import type { CreateMenuItemRequest, MenuItem } from "@/lib/types";
-import { mockCategories, mockMenuItems } from "@/lib/mock-data";
-import { generateId } from "@/lib/utils";
+import { NextRequest, NextResponse } from 'next/server';
+import type { CreateMenuItemRequest, MenuItem } from '@/lib/types';
+import { mockCategories, mockMenuItems } from '@/lib/mock-data';
+import { generateId } from '@/lib/utils';
 
 // Base API URL - would typically come from environment variables
 const API_URL = process.env.BACKEND_API_URL;
@@ -24,11 +24,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error fetching menu items:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch menu items" },
-      { status: 500 }
-    );
+    console.error('Error fetching menu items:', error);
+    return NextResponse.json({ error: 'Failed to fetch menu items' }, { status: 500 });
   }
 }
 
@@ -38,34 +35,18 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: Request) {
   try {
-    const body: CreateMenuItemRequest = await request.json();
-
-    // Validate request body
-    if (
-      !body.name ||
-      !body.price === undefined ||
-      !body.categoryId
-    ) {
-      return NextResponse.json(
-        { error: "Name, price, and categoryId are required" },
-        { status: 400 }
-      );
-    }
+    const formData = await request.formData();
 
     // In a real implementation, this would create a menu item in the backend API
     const response = await fetch(`${API_URL}/menu-items`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    })
-    const data = await response.json()
+      method: 'POST',
+      body: formData,
+    });
+    const data = await response.json();
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error("Error creating menu item:", error);
-    return NextResponse.json(
-      { error: "Failed to create menu item" },
-      { status: 500 }
-    );
+    console.error('Error creating menu item:', error);
+    return NextResponse.json({ error: 'Failed to create menu item' }, { status: 500 });
   }
 }
