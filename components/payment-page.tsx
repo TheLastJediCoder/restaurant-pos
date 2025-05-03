@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,6 +17,7 @@ export function PaymentPage({ orderId }: { orderId: string }) {
   const [amountTendered, setAmountTendered] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [order, setOrder] = useState<Order | undefined>(undefined);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const fetchOrder = async (orderId: string) => {
     try {
@@ -112,6 +113,10 @@ export function PaymentPage({ orderId }: { orderId: string }) {
   // Quick amount buttons
   const quickAmounts = [50, 100, 200, 500];
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <div className="p-4 h-[calc(100vh-4rem)] overflow-auto">
       <div className="flex justify-between items-center mb-4">
@@ -162,6 +167,11 @@ export function PaymentPage({ orderId }: { orderId: string }) {
                             ? formatCurrency(Number.parseFloat(amountTendered) || 0)
                             : '$0.00'}
                         </div>
+                        <input
+                          onKeyDown={(e) => handleKeypadInput(e.key.toLowerCase())}
+                          ref={inputRef}
+                          style={{ opacity: 0, position: 'absolute', pointerEvents: 'none' }}
+                        ></input>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Change</p>
